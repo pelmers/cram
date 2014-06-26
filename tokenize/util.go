@@ -1,4 +1,4 @@
-package cram
+package tokenize
 
 import (
 	"strconv"

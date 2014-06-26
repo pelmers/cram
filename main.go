@@ -5,8 +5,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/pelmers/cram"
-	"github.com/pelmers/cram/js"
+	"github.com/pelmers/cram/shapes"
+	"github.com/pelmers/cram/tokenize"
+	"github.com/pelmers/cram/tokenize/js"
 	"io/ioutil"
 	"log"
 	"math"
@@ -18,7 +19,7 @@ type Reshaper func([]string, float64) string
 
 // Return the right tokenizer for the filename.
 // If error != nil, then we could not pick a tokenizer for it.
-func pickTokenizer(filename string) (cram.Tokenizer, error) {
+func pickTokenizer(filename string) (tokenize.Tokenizer, error) {
 	if strings.HasSuffix(filename, ".js") {
 		return js.NewJSTokenizer(), nil
 	}
@@ -26,7 +27,7 @@ func pickTokenizer(filename string) (cram.Tokenizer, error) {
 	if filename == "stdin" {
 		return js.NewJSTokenizer(), nil
 	}
-	return unimplementedTokenizer{}, errors.New(filename + " is not a supported filetype")
+	return tokenize.Unimplemented{}, errors.New(filename + " is not a supported filetype")
 }
 
 // Return a reshaper function for the option selection.
@@ -34,15 +35,15 @@ func pickTokenizer(filename string) (cram.Tokenizer, error) {
 func pickReshaper(option string) Reshaper {
 	switch option {
 	case "square", "box":
-		return Square
+		return shapes.Square
 	case "triangle", "pyramid":
-		return Triangle
+		return shapes.Triangle
 	case "trapezoid", "volcano":
-		return Trapezoid
+		return shapes.Trapezoid
 	case "circle", "ellipse":
-		return Ellipse
+		return shapes.Ellipse
 	case "diamond":
-		return Diamond
+		return shapes.Diamond
 	}
 	// default choice is to just concatenate everything
 	return func(tok []string, _ float64) string {

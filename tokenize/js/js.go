@@ -2,7 +2,7 @@ package js
 
 import (
 	"fmt"
-	"github.com/pelmers/cram"
+	"github.com/pelmers/cram/tokenize"
 	"sort"
 	"strings"
 	"unicode"
@@ -38,7 +38,7 @@ func (tok *JSTokenizer) firstSymbol(text string) (int, rune) {
 		if unicode.IsSpace(t) {
 			return i, t
 		}
-		if cram.SearchRunes(tok.symbols, t) != -1 {
+		if tokenize.SearchRunes(tok.symbols, t) != -1 {
 			return i, t
 		}
 	}
@@ -52,17 +52,17 @@ func (tok *JSTokenizer) isSymbol(t string) bool {
 		return false
 	}
 	r := rune(t[0])
-	return unicode.IsSpace(r) || cram.SearchRunes(tok.symbols, r) != -1
+	return unicode.IsSpace(r) || tokenize.SearchRunes(tok.symbols, r) != -1
 }
 
 // Return whether t is a javascript reserved word
 func (tok *JSTokenizer) isKw(t string) bool {
-	return cram.BSearchStrings(tok.keywords, strings.TrimSpace(t)) != -1
+	return tokenize.BSearchStrings(tok.keywords, strings.TrimSpace(t)) != -1
 }
 
 // Return whether the identifier t is reserved
 func (tok *JSTokenizer) isReserved(t string) bool {
-	return cram.BSearchStrings(tok.reserved, strings.TrimSpace(t)) != -1
+	return tokenize.BSearchStrings(tok.reserved, strings.TrimSpace(t)) != -1
 }
 
 // Return whether the string is quoted like a JS string
@@ -76,12 +76,12 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	defs := make(map[string]string)
 	for i, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
-		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || cram.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
+		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
 			continue
 		}
 		// if it comes after "var" keyword, then define it
 		if strings.TrimSpace(tokens[i-1]) == "var" {
-			defs[t] = cram.MakeIdentString(length)
+			defs[t] = tokenize.MakeIdentString(length)
 		}
 	}
 	// second pass: replace tokens with their renames, remembering to trim off

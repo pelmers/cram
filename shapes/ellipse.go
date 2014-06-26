@@ -1,4 +1,4 @@
-package main
+package shapes
 
 import (
 	"math"
@@ -14,7 +14,7 @@ func Ellipse(tokens []string, ratio float64) string {
 	// -> w = sqrt(A/π*ratio^2)
 	w := math.Sqrt(area / math.Pi * math.Pow(ratio, 2))
 	// magic constant here adjusts for fact that we can't fit perfectly
-	h := 0.97 / math.Pow(ratio, 2) * w
+	h := 0.99 / math.Pow(ratio, 2) * w
 	// squash the top and bottom a little bit
 	minWidth := 8.0
 	widthFunc := func(y int) int {

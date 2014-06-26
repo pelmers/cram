@@ -1,4 +1,4 @@
-package cram
+package tokenize
 
 type Tokenizer interface {
 	// Return a slice of tokens as strings between which any amount of whitespace

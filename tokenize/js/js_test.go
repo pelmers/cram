@@ -3,7 +3,7 @@ package js
 import (
 	"bufio"
 	"fmt"
-	"github.com/pelmers/cram"
+	"github.com/pelmers/cram/tokenize"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -24,7 +24,7 @@ func TestTokenizeFile(t *testing.T) {
 	tok := NewJSTokenizer()
 	tokens := tok.Tokenize(string(code), []string{""})
 	expected_tokens := []string{}
-	if !cram.SlicesEqual(tokens, expected_tokens) {
+	if !tokenize.SlicesEqual(tokens, expected_tokens) {
 		fmt.Println(strings.Join(tokens, ""))
 		t.Error("Expected", expected_tokens, "Got", tokens)
 	}
