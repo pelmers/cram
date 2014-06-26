@@ -2,7 +2,7 @@ package js
 
 import (
 	"fmt"
-	rs "github.com/pelmers/reshapify"
+	"github.com/pelmers/cram"
 	"sort"
 	"strings"
 	"unicode"
@@ -21,13 +21,13 @@ func NewJSTokenizer() *JSTokenizer {
 		// keywords
 		[]string{
 			"break", "case", "comment", "continue", "default", "delete", "do", "else",
-			"export", "false", "for", "function", "if", "import", "in", "instanceof", "label", "new", "null",
-			"return", "switch", "this", "true", "typeof", "undefined", "var", "void", "while", "with",
+			"export", "for", "function", "if", "import", "in", "instanceof", "label", "new",
+			"return", "switch", "this", "typeof", "var", "void", "while", "with",
 		},
 		// reserved
 		[]string{
-			"===", "==", "!==", "!=", "console", "log", "document", "window", "length", "push", "hasOwnProperty",
-			">=", "<=", "+=", "-=", "reverse", "shift", "random", "Math", "floor",
+			"===", "==", "!==", "!=", "console", "document", "window", "length", "push", "hasOwnProperty",
+			">=", "<=", "+=", "-=", "reverse", "shift", "Math", "undefined", "null", "true", "false",
 		},
 	}
 }
@@ -38,7 +38,7 @@ func (tok *JSTokenizer) firstSymbol(text string) (int, rune) {
 		if unicode.IsSpace(t) {
 			return i, t
 		}
-		if rs.SearchRunes(tok.symbols, t) != -1 {
+		if cram.SearchRunes(tok.symbols, t) != -1 {
 			return i, t
 		}
 	}
@@ -52,17 +52,17 @@ func (tok *JSTokenizer) isSymbol(t string) bool {
 		return false
 	}
 	r := rune(t[0])
-	return unicode.IsSpace(r) || rs.SearchRunes(tok.symbols, r) != -1
+	return unicode.IsSpace(r) || cram.SearchRunes(tok.symbols, r) != -1
 }
 
 // Return whether t is a javascript reserved word
 func (tok *JSTokenizer) isKw(t string) bool {
-	return rs.BSearchStrings(tok.keywords, strings.TrimSpace(t)) != -1
+	return cram.BSearchStrings(tok.keywords, strings.TrimSpace(t)) != -1
 }
 
 // Return whether the identifier t is reserved
 func (tok *JSTokenizer) isReserved(t string) bool {
-	return rs.BSearchStrings(tok.reserved, strings.TrimSpace(t)) != -1
+	return cram.BSearchStrings(tok.reserved, strings.TrimSpace(t)) != -1
 }
 
 // Return whether the string is quoted like a JS string
@@ -76,7 +76,7 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	defs := make(map[string]string)
 	for _, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
-		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || rs.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
+		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || cram.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
 			continue
 		}
 		// if not defined, define it
@@ -94,11 +94,11 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 				if suf, ok := defs[strings.TrimPrefix(t, "return ")]; ok {
 					defs[t] = "return " + suf
 				} else {
-					defs[strings.TrimPrefix(t, "return ")] = rs.MakeIdentString(length)
+					defs[strings.TrimPrefix(t, "return ")] = cram.MakeIdentString(length)
 					defs[t] = "return " + defs[suf]
 				}
 			} else {
-				defs[t] = rs.MakeIdentString(length)
+				defs[t] = cram.MakeIdentString(length)
 			}
 		}
 	}
@@ -150,6 +150,7 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens[len(tokens)-1] = string(nsRune) + "="
 				code = code[1:]
 			}
+			// TODO: multiline comments
 			// check for single-line comment
 		case '/':
 			if code[0] == '/' {

@@ -5,8 +5,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	rs "github.com/pelmers/reshapify"
-	"github.com/pelmers/reshapify/js"
+	"github.com/pelmers/cram"
+	"github.com/pelmers/cram/js"
 	"io/ioutil"
 	"log"
 	"os"
@@ -17,7 +17,7 @@ type Reshaper func([]string) string
 
 // Return the right tokenizer for the filename.
 // If error != nil, then we could not pick a tokenizer for it.
-func pickTokenizer(filename string) (rs.Tokenizer, error) {
+func pickTokenizer(filename string) (cram.Tokenizer, error) {
 	if strings.HasSuffix(filename, ".js") {
 		return js.NewJSTokenizer(), nil
 	}

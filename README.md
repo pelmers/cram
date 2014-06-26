@@ -1,1 +1,1 @@
-Reshapify your source files into squares, triangles, circles.
+Cuz all the cool kids cram.

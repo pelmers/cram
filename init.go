@@ -1,4 +1,4 @@
-package reshapify
+package cram
 
 import (
 	"math/rand"

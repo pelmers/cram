@@ -1,4 +1,4 @@
-package reshapify
+package cram
 
 type Tokenizer interface {
 	// Return a slice of tokens as strings between which any amount of whitespace
