@@ -9,11 +9,12 @@ import (
 	"github.com/pelmers/cram/js"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"strings"
 )
 
-type Reshaper func([]string) string
+type Reshaper func([]string, float64) string
 
 // Return the right tokenizer for the filename.
 // If error != nil, then we could not pick a tokenizer for it.
@@ -21,8 +22,8 @@ func pickTokenizer(filename string) (cram.Tokenizer, error) {
 	if strings.HasSuffix(filename, ".js") {
 		return js.NewJSTokenizer(), nil
 	}
+	// default stdin to javascript
 	if filename == "stdin" {
-		// default stdin to javascript
 		return js.NewJSTokenizer(), nil
 	}
 	return unimplementedTokenizer{}, errors.New(filename + " is not a supported filetype")
@@ -32,25 +33,28 @@ func pickTokenizer(filename string) (cram.Tokenizer, error) {
 // If option is not matched to a reshaper, return the default: concatenation
 func pickReshaper(option string) Reshaper {
 	switch option {
-	case "square":
+	case "square", "box":
 		return Square
-	case "triangle":
+	case "triangle", "pyramid":
 		return Triangle
-	case "circle":
-		return Circle
+	case "trapezoid", "volcano":
+		return Trapezoid
+	case "circle", "ellipse":
+		return Ellipse
 	}
 	// default choice is to just concatenate everything
-	return func(tok []string) string {
+	return func(tok []string, _ float64) string {
 		return strings.Join(tok, "")
 	}
 }
 
 func main() {
 	filename := flag.String("f", "stdin", "Input file name, default to stdin")
-	allow_rename := flag.Bool("ar", false, "Allow identifier renaming")
-	reserved := flag.String("r", "", "Comma separated list of reserved identifier names (won't be renamed)")
-	shape := flag.String("s", "none", "Shape to transform code into")
+	allow_rename := flag.Bool("rename", false, "Allow identifier renaming")
+	reserved := flag.String("reserved", "", "Comma separated list of unrenameable identifiers")
+	shape := flag.String("s", "none", "Shape to cram code into")
 	length := flag.Int("l", 3, "Target length of renamed identifiers")
+	ratio := flag.Float64("r", 2.25, "Height:Width ratio (bigger for taller, shorter for wider)")
 	flag.Parse()
 	var file *os.File
 	if *filename == "stdin" {
@@ -76,6 +80,6 @@ func main() {
 		tok.RenameTokens(tokens, *length)
 	}
 	reshape := pickReshaper(*shape)
-	fmt.Println(reshape(tokens))
+	fmt.Println(reshape(tokens, math.Abs(*ratio)))
 	file.Close()
 }

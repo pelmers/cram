@@ -74,35 +74,18 @@ func (tok *JSTokenizer) isQuoted(a string) bool {
 func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	// first pass: create definition mapping
 	defs := make(map[string]string)
-	for _, t := range tokens {
+	for i, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
 		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || cram.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
 			continue
 		}
-		// if not defined, define it
-		if _, ok := defs[t]; !ok {
-			// make sure the ident with unary operator attached doesn't change
-			if strings.HasSuffix(t, "++") {
-				if pre, ok := defs[strings.TrimSuffix(t, "++")]; ok {
-					defs[t] = pre + "++"
-				}
-			} else if strings.HasSuffix(t, "--") {
-				if pre, ok := defs[strings.TrimSuffix(t, "--")]; ok {
-					defs[t] = pre + "--"
-				}
-			} else if strings.HasPrefix(t, "return ") {
-				if suf, ok := defs[strings.TrimPrefix(t, "return ")]; ok {
-					defs[t] = "return " + suf
-				} else {
-					defs[strings.TrimPrefix(t, "return ")] = cram.MakeIdentString(length)
-					defs[t] = "return " + defs[suf]
-				}
-			} else {
-				defs[t] = cram.MakeIdentString(length)
-			}
+		// if it comes after "var" keyword, then define it
+		if strings.TrimSpace(tokens[i-1]) == "var" {
+			defs[t] = cram.MakeIdentString(length)
 		}
 	}
-	// second pass: replace tokens with their renames
+	// second pass: replace tokens with their renames, remembering to trim off
+	// unary postfix operators
 	for i, _ := range tokens {
 		if ren, ok := defs[tokens[i]]; ok {
 			tokens[i] = ren
@@ -142,7 +125,8 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				code = code[1:]
 				// delete the - or + we just added
 				tokens = tokens[:len(tokens)-1]
-				// add -- or ++ to the end of the previous token
+				// add -- or ++ to either the end of the previous token
+				// TODO: or the start of the next one
 				tokens[len(tokens)-1] += string([]rune{nsRune, nsRune})
 			}
 			// check for += and -=
@@ -150,13 +134,17 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens[len(tokens)-1] = string(nsRune) + "="
 				code = code[1:]
 			}
-			// TODO: multiline comments
 			// check for single-line comment
 		case '/':
 			if code[0] == '/' {
 				// ignore the rest of the line and remove the / token we added
 				tokens = tokens[:len(tokens)-1]
 				code = code[strings.IndexRune(code, '\n')+1:]
+			}
+			if code[0] == '*' {
+				// skip the codepoint forward until the "*/" end comment
+				tokens = tokens[:len(tokens)-1]
+				code = code[strings.Index(code, "*/")+2:]
 			}
 		case '=':
 			if code[0] == '=' && code[1] == '=' {

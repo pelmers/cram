@@ -4,14 +4,12 @@ import (
 	"math"
 )
 
-func Triangle(tokens []string) string {
+func Triangle(tokens []string, ratio float64) string {
 	// area of triangle = 0.5 * base * height
 	area := float64(TotalLength(tokens))
-	// define conversion ratio height:base (since letters are taller than wide)
-	heightBaseRatio := 0.4
-	// area = 0.5 * base * heightBaseRatio * base
-	// -> base = sqrt(2*area / heightBaseRatio)
-	base := math.Sqrt(2 * area / heightBaseRatio)
+	// area = 0.5 * base * ratio * base
+	// -> base = sqrt(2*area / ratio)
+	base := math.Sqrt(2 * area * ratio)
 	// height = 2*area / base
 	height := 2.0 * area / base
 	// minimum width of a line (flattens the top of the triangle)
