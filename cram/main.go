@@ -41,6 +41,8 @@ func pickReshaper(option string) Reshaper {
 		return Trapezoid
 	case "circle", "ellipse":
 		return Ellipse
+	case "diamond":
+		return Diamond
 	}
 	// default choice is to just concatenate everything
 	return func(tok []string, _ float64) string {

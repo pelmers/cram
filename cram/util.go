@@ -50,20 +50,25 @@ func SplitLines(tokens []string, widthFromLineNo func(int) int) [][]string {
 	return lines
 }
 
+// Return the maximum of widthFromLineNo over the domain [0, no_lines)
+func maxWidth(no_lines int, widthFromLineNo func(int) int) int {
+	var max int
+	for i := 0; i < no_lines; i++ {
+		val := widthFromLineNo(i)
+		if val > max {
+			max = val
+		}
+	}
+	return max
+}
+
 // Given a slice of lines, where each line is a slice of token strings that should
 // appear on that line and a function that maps line number -> desired width,
 // add spaces to each line to make it reach the desired width if possible.
 // If centered is set to true, also center the output.
 // Join the justified lines together and return a string.
 func JustifyByWidth(lines [][]string, widthFromLineNo func(int) int, centered bool) string {
-	var maxWidth int
-	if centered {
-		for _, line := range lines {
-			if len(line) > maxWidth {
-				maxWidth = len(line)
-			}
-		}
-	}
+	maxW := maxWidth(len(lines), widthFromLineNo)
 	justifiedLines := make([]string, 0, len(lines))
 	for i, line := range lines {
 		width := widthFromLineNo(i)
@@ -76,9 +81,9 @@ func JustifyByWidth(lines [][]string, widthFromLineNo func(int) int, centered bo
 			line[idx] += " "
 		}
 		spacing := ""
-		// center by prepending spaces such that the center is at maxWidth/2
+		// center by prepending spaces such that the center is at maxW/2
 		if centered {
-			spacing = fmt.Sprintf("%*s", (maxWidth - width/2), " ")
+			spacing = fmt.Sprintf("%*s", (maxW-width)/2+2, " ")
 		}
 		justifiedLines = append(justifiedLines, spacing+strings.Join(line, ""))
 	}
