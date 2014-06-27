@@ -42,6 +42,8 @@ func pickReshaper(option string) shapes.Reshaper {
 		return shapes.Ellipse
 	case "diamond":
 		return shapes.Diamond
+	case "pepper", "habanero":
+		return shapes.Pepper
 	}
 	// default choice is to just concatenate everything
 	return func(tok []string, _ float64) string {

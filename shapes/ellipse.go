@@ -13,6 +13,7 @@ func Ellipse(tokens []string, ratio float64) string {
 	// -> w = sqrt(A/π*ratio^2)
 	w := math.Sqrt(area / math.Pi * math.Pow(ratio, 2))
 	// magic constant here adjusts for fact that we can't fit perfectly
+	// ideally it would be a function of area and minWidth
 	h := 0.99 / math.Pow(ratio, 2) * w
 	// squash the top and bottom a little bit
 	minWidth := 7
