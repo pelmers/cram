@@ -36,17 +36,24 @@ func Pepper(tokens []string, ratio float64) string {
 	area := float64(TotalLength(tokens))
 	// How to apportion the area:
 	stem := 0.03
+	trapezoid := 0.05
 	square := 0.5
 	// rest: flipped triangle
+	// do some counting to split tokens into their components
 	stemL := countTokensUpToTotalLength(tokens, int(area*stem))
 	stemTokens := tokens[:stemL]
-	squareL := countTokensUpToTotalLength(tokens[stemL:], int(area*square))
-	squareTokens := tokens[stemL : stemL+squareL]
-	triTokens := tokens[stemL+squareL:]
+	trapL := countTokensUpToTotalLength(tokens, int(area*trapezoid))
+	trapTokens := tokens[stemL : stemL+trapL]
+	squareL := countTokensUpToTotalLength(tokens[stemL+trapL:], int(area*square))
+	squareTokens := tokens[stemL+trapL : stemL+trapL+squareL]
+	triTokens := tokens[stemL+trapL+squareL:]
 	// the top part is a very skinny curved stem
 	squareCode := Square(squareTokens, ratio)
-	// the width of the square serves as the base of the triangle
+	// the width of the square serves as the base of the triangle and trapezoid
 	base := float64(strings.Index(squareCode, "\n"))
+	trapArea := float64(TotalLength(trapTokens))
+	trapWidth := parametrizedTriangle(trapArea, 0.7*base, 2.0*trapArea/base, int(0.4*base))
+	trapCode := JustifyByWidth(SplitLines(trapTokens, trapWidth), trapWidth, true)
 	triArea := float64(TotalLength(triTokens))
 	triParams := parametrizedTriangle(triArea, base, 2.0*triArea/base, 5)
 	triWidth := func(h int) int {
@@ -64,7 +71,8 @@ func Pepper(tokens []string, ratio float64) string {
 		}
 	}
 	return strings.Join([]string{
-		perturbIndents(stemCode, 0.3) + squareCode,
+		perturbIndents(stemCode, 0.3) + trapCode,
+		squareCode,
 		perturbIndents(triCode, 0.5),
 	}, "\n")
 }
