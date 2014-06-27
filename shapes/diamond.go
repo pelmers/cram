@@ -11,12 +11,15 @@ func Diamond(tokens []string, ratio float64) string {
 	base := math.Sqrt(2 * area * ratio)
 	height := 2.0 * area / base
 	minWidth := 5
-	widthFunc := func(h int) int {
+	// top and bottom are triangles
+	triWidth := parametrizedTriangle(area, base, height, minWidth)
+	width := func(h int) int {
 		if h <= int(height) {
-			return int(float64(h)/height*base) + minWidth
+			return triWidth(h)
 		} else {
-			return int((2*height-float64(h))/height*base) + minWidth
+			// bottom half, subtract h to have a negative slope
+			return triWidth(int(2*height - float64(h)))
 		}
 	}
-	return JustifyByWidth(SplitLines(tokens, widthFunc), widthFunc, true)
+	return JustifyByWidth(SplitLines(tokens, width), width, true)
 }

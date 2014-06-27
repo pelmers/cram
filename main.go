@@ -15,8 +15,6 @@ import (
 	"strings"
 )
 
-type Reshaper func([]string, float64) string
-
 // Return the right tokenizer for the filename.
 // If error != nil, then we could not pick a tokenizer for it.
 func pickTokenizer(filename string) (tokenize.Tokenizer, error) {
@@ -32,7 +30,7 @@ func pickTokenizer(filename string) (tokenize.Tokenizer, error) {
 
 // Return a reshaper function for the option selection.
 // If option is not matched to a reshaper, return the default: concatenation
-func pickReshaper(option string) Reshaper {
+func pickReshaper(option string) shapes.Reshaper {
 	switch option {
 	case "square", "box":
 		return shapes.Square
@@ -40,7 +38,7 @@ func pickReshaper(option string) Reshaper {
 		return shapes.Triangle
 	case "trapezoid", "volcano":
 		return shapes.Trapezoid
-	case "circle", "ellipse":
+	case "circle", "ellipse", "sun", "moon":
 		return shapes.Ellipse
 	case "diamond":
 		return shapes.Diamond
@@ -56,7 +54,7 @@ func main() {
 	allow_rename := flag.Bool("rename", false, "Allow identifier renaming")
 	reserved := flag.String("reserved", "", "Comma separated list of unrenameable identifiers")
 	shape := flag.String("s", "none", "Shape to cram code into")
-	length := flag.Int("l", 3, "Target length of renamed identifiers")
+	length := flag.Int("l", 2, "Target length of renamed identifiers")
 	ratio := flag.Float64("r", 2.25, "Height:Width ratio (bigger for taller, shorter for wider)")
 	flag.Parse()
 	var file *os.File

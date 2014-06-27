@@ -3,6 +3,7 @@ package shapes
 import (
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"strings"
 )
@@ -20,7 +21,7 @@ func TotalLength(a []string) int {
 // line number -> desired width,
 // split tokens into lines which do not exceed desired width,
 // unless the desired width is less than the length of one token.
-func SplitLines(tokens []string, widthFromLineNo func(int) int) [][]string {
+func SplitLines(tokens []string, widthFromLineNo widthFunc) [][]string {
 	lines := make([][]string, 0)
 	line_no := 0
 	token_no := 0
@@ -51,7 +52,7 @@ func SplitLines(tokens []string, widthFromLineNo func(int) int) [][]string {
 }
 
 // Return the maximum of widthFromLineNo over the domain [0, no_lines)
-func maxWidth(no_lines int, widthFromLineNo func(int) int) int {
+func maxWidth(no_lines int, widthFromLineNo widthFunc) int {
 	var max int
 	for i := 0; i < no_lines; i++ {
 		val := widthFromLineNo(i)
@@ -71,11 +72,7 @@ func JustifyByWidth(lines [][]string, widthFromLineNo func(int) int, centered bo
 	maxW := maxWidth(len(lines), widthFromLineNo)
 	justifiedLines := make([]string, 0, len(lines))
 	for i, line := range lines {
-		width := widthFromLineNo(i)
-		if width <= 0 {
-			log.Printf("Negative width, defaulting to 1 : %d on line %d\n", width, i)
-			width = 1
-		}
+		width := int(math.Max(float64(widthFromLineNo(i)), 1))
 		for TotalLength(line) < width {
 			idx := rand.Intn(len(line))
 			line[idx] += " "

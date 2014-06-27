@@ -76,18 +76,35 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	defs := make(map[string]string)
 	for i, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
-		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) || len(t) == 0 {
+		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) {
 			continue
 		}
-		// if it comes after "var" keyword, then define it
-		if strings.TrimSpace(tokens[i-1]) == "var" {
+		// if it comes after a dot, also check the part before the dot
+		if strings.TrimSpace(tokens[i-1]) == "." {
+			t := tokens[i-2]
+			if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) {
+				continue
+			}
+		}
+		if strings.HasPrefix(t, "return") {
+			ident := strings.TrimSpace(strings.TrimPrefix(t, "return"))
+			defs[ident] = tokenize.MakeIdentString(length)
+			defs[t] = "return " + defs[ident]
+		} else if strings.HasSuffix(t, "++") {
+			ident := strings.TrimSuffix(t, "++")
+			defs[ident] = tokenize.MakeIdentString(length)
+			defs[t] = defs[ident] + "++"
+		} else if strings.HasSuffix(t, "--") {
+			ident := strings.TrimSuffix(t, "--")
+			defs[ident] = tokenize.MakeIdentString(length)
+			defs[t] = defs[ident] + "--"
+		} else {
 			defs[t] = tokenize.MakeIdentString(length)
 		}
 	}
-	// second pass: replace tokens with their renames, remembering to trim off
-	// unary postfix operators
+	// second pass: replace tokens with their renames
 	for i, _ := range tokens {
-		if ren, ok := defs[tokens[i]]; ok {
+		if ren, ok := defs[tokens[i]]; ok && len(tokens[i]) > 0 {
 			tokens[i] = ren
 		}
 	}
@@ -127,6 +144,7 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens = tokens[:len(tokens)-1]
 				// add -- or ++ to either the end of the previous token
 				// TODO: or the start of the next one
+				// maybe I should preprocess prefix and turn them into postfix?
 				tokens[len(tokens)-1] += string([]rune{nsRune, nsRune})
 			}
 			// check for += and -=
@@ -145,6 +163,15 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				// skip the codepoint forward until the "*/" end comment
 				tokens = tokens[:len(tokens)-1]
 				code = code[strings.Index(code, "*/")+2:]
+			}
+			// if the previous token is a symbol, this is a regexp (I think)
+			if tok.isSymbol(tokens[len(tokens)-1]) {
+				// find the next symbol after the next / restart there
+				next, r := tok.firstSymbol(code[strings.Index(code, "/")+1:])
+				if r != rune(0) {
+					tokens[len(tokens)-1] = code[:next]
+					code = code[next:]
+				}
 			}
 		case '=':
 			if code[0] == '=' && code[1] == '=' {
@@ -172,7 +199,7 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 	}
 	// go through tokens and hardcode a space before and after any keywords
 	for i, _ := range tokens[:len(tokens)-1] {
-		if tok.isKw(tokens[i]) {
+		if tok.isKw(tokens[i]) || tokenize.IsDigits(tokens[i]) {
 			if !tok.isSymbol(tokens[i+1]) {
 				tokens[i] = tokens[i] + " "
 				if tokens[i] == "return " {
