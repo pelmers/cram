@@ -167,9 +167,11 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 			// if the previous token is a symbol, this is a regexp (I think)
 			if tok.isSymbol(tokens[len(tokens)-1]) {
 				// find the next symbol after the next / restart there
-				next, r := tok.firstSymbol(code[strings.Index(code, "/")+1:])
+				nextSlash := strings.Index(code, "/")
+				next, r := tok.firstSymbol(code[nextSlash+1:])
+				next += nextSlash + 1
 				if r != rune(0) {
-					tokens[len(tokens)-1] = code[:next]
+					tokens[len(tokens)-1] = "/" + code[:next]
 					code = code[next:]
 				}
 			}

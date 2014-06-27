@@ -35,9 +35,9 @@ func Pepper(tokens []string, ratio float64) string {
 	// model: http://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Habanero_closeup_edit2.jpg/640px-Habanero_closeup_edit2.jpg
 	area := float64(TotalLength(tokens))
 	// How to apportion the area:
-	stem := 0.03
-	trapezoid := 0.05
-	square := 0.5
+	stem := 0.01
+	trapezoid := 0.13
+	square := 0.45
 	// rest: flipped triangle
 	// do some counting to split tokens into their components
 	stemL := countTokensUpToTotalLength(tokens, int(area*stem))
@@ -52,7 +52,7 @@ func Pepper(tokens []string, ratio float64) string {
 	// the width of the square serves as the base of the triangle and trapezoid
 	base := float64(strings.Index(squareCode, "\n"))
 	trapArea := float64(TotalLength(trapTokens))
-	trapWidth := parametrizedTriangle(trapArea, 0.7*base, 2.0*trapArea/base, int(0.4*base))
+	trapWidth := parametrizedTriangle(trapArea, 0.69*base, 2.0*trapArea/base, int(0.42*base))
 	trapCode := JustifyByWidth(SplitLines(trapTokens, trapWidth), trapWidth, true)
 	triArea := float64(TotalLength(triTokens))
 	triParams := parametrizedTriangle(triArea, base, 2.0*triArea/base, 5)
@@ -71,8 +71,8 @@ func Pepper(tokens []string, ratio float64) string {
 		}
 	}
 	return strings.Join([]string{
-		perturbIndents(stemCode, 0.3) + trapCode,
+		perturbIndents(stemCode, 0.2) + trapCode,
 		squareCode,
-		perturbIndents(triCode, 0.5),
+		perturbIndents(triCode, 0.4),
 	}, "\n")
 }
