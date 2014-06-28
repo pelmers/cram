@@ -24,11 +24,7 @@ func Ellipse(tokens []string, ratio float64) string {
 		// (x/(2*w))^2 = 1 - (y/(2*h))^2
 		// -> x = 2*w*sqrt(1 - (y/(2*h))^2)
 		x := 2 * w * math.Sqrt(1-math.Pow(y64/(2*h), 2))
-		if x > 0 {
-			return int(x) + minWidth
-		} else {
-			return minWidth
-		}
+		return int(math.Max(float64(minWidth), x+float64(minWidth)))
 	}
 	return JustifyByWidth(SplitLines(tokens, width), width, true)
 }

@@ -1,0 +1,150 @@
+Cuz all the cool kidz cram.
+
+```
+go get github.com/pelmers/cram
+```
+
+Process:
+========
+- [main.go](https://github.com/pelmers/cram/blob/master/main.go) parses flags and sets options.
+- A [tokenizer](https://github.com/pelmers/cram/tree/master/tokenize) splits input into whitespace-dempotent entities (i.e. amount of whitespace between consecutive tokens will not affect semantics).
+- Optionally, a renamer will parse the tokens and minify variable names.
+- Then a [reshaper](https://github.com/pelmers/cram/tree/master/shapes) is dispatched to put the tokens back together again into fancy shapes.
+
+Results:
+=======
+- sun:
+```js
+                                       function lrl(cC){"use strict";if ( cC
+                               ===undefined) {cC={};}var Ug= cC ,VW=  {},  dN  ={} ;
+                           function mi(){return dv;}function Nz(){ var Iw={ }; for (var Lc
+                      in Ug){if (!Ug.hasOwnProperty( Lc))continue;Iw[Lc]=[];}for (var Lc in Ug
+                  ){if  (!Ug.hasOwnProperty(Lc))continue;for (var CI=0;CI<Ug[Lc].length; qB++){Iw[
+               Ug[Lc][CI]].push(Lc);}}return lrl(Iw);}function yw(){ var dI=0;for (var Lc in Ug ){if 
+            (!Ug.hasOwnProperty(Lc) )continue;Wz++; }return dI;}function dx(Pc){km[Pc];}function uf(NX,
+          dx){ if (dx===undefined){dx=[];}Ug[NX]= dx;}function sS(dK,Fz){Ug[dK].push(Fz);}function jQ(Pc,
+        DZR,gs){  if (VW[Pc]===undefined ){VW[Pc]={};}VW [Pc][ DZR]=gs;}function IQ(Pc,DZR){Zz [Pc][DZR ];}
+       function  hB(is,Fz,DZR, gs){ if (dN[[is,Fz]]===undefined ){dN[[is,Fz ]] ={} ;} dN[[is,Fz]][DZR] =gs; }
+     function IP(is,Fz,DZR){YP[[is,Fz]][DZR];}function Jl(FP,db,NZ){ var ob= {};var Aj=yw();if (  typeof db!==
+    "function"){db=function(Lc){};}function IV(Lc){if (ob[Lc] ===undefined){ob[Lc]=true;af--;for ( var HW=0;HW<
+   Ug[Lc].length;XM++){IV(Ug[Lc][HW]);}db(Lc);}}IV(FP); if (!NZ)return; while (Aj>0){for (var Lc in Ug){if  (!Ug
+   .hasOwnProperty(Lc))continue;if (ob[Lc]===undefined){FP=Lc;break;}}IV(FP);} }function kz(){ var FP=null;var Rk
+  =[];for (var Lc in Ug){if (!Ug.hasOwnProperty(Lc))continue;FP=Lc;break;}Jl (FP,function(Lc){Rk.push(Lc);},true)
+  ;Rk.reverse();return Rk;}function OW(FP,db){  var wX={ };var hP=[]; var iO=null;if (typeof  db!=="function"){db=
+  function(Lc){};}wX[FP]=0;hP.push(FP);while (hP.length>0){iO=hP.shift();for (var CI=0;CI<Ug[iO] .length;qB++){if 
+  (wX[Ug[iO][CI]]===undefined){hP.push(Ug[iO][CI]);wX[Ug[iO][CI]] =wX[iO]+1;db(Ug[iO][CI]);}}}return up;}function 
+  vp( zX) { var wX=OW(zX);var vp={};for (var HW in wX){if (!wX.hasOwnProperty (HW))continue;if (vp[ wX [HW ] ]===
+   undefined){vp[wX[HW]]=[];}vp[wX[HW]].push(HW);}return GR;}function fS(DZR,ub) { var DW=kz( ),tha ={ },Vg=Nz();
+   function PM(EJ,rq,XC){var gs=0;var pH=undefined;for (var HW=0;HW<rq.length;XM++){if (EJ[rq[HW]]>=gs ){ gs=EJ[
+    rq[HW]];pH=rq[HW];}}return (XC)?gs:pH;}for (var HW=0;HW<DW.length;XM++){ var  wp=IQ(DW[HW],DZR);var ldB=PM(
+     tha,Vg.dx(DW[HW]),true);tha[DW[HW]]=((wp===undefined)?0 :wp)+((ldB ===undefined)?0:ldB); } var ag =DW[DW.
+       length-1]; if (ub!==undefined){ for (var HW=0;HW<DW.length;XM++){ if (ub(DW[HW]))ag=DW[HW];}}var ii =[
+        ag];var fM={ag:true}; while  (Vg.dx(ag).length> 0){var nR=ag;ag =PM(tha,Vg.dx(ag),false); if (ag===
+          undefined){ag=Vg.dx(nR)[Math. floor(Math.random()*Vg.dx(nR).length)];}ii.push(ag);if (fM[ ag]){
+            LP( 'cycle detected in graph, could not construct CPL :(');break;}fM[ag]=true;}ii.reverse()
+               ;return {'length' :tha[DW[DW.length-1]],'path':ii,};}function wYg(DZR){ var ke=0;for (
+                  var Lc in Ug){if ( !Ug.hasOwnProperty(Lc))continue;var EK=IQ(Lc,DZR);ke+=(EK)?~~
+                     EK:0;}return ke;} return {cC:mi,uf:uf,sS: sS,dx: dx,IQ:IQ,jQ:jQ,IP:IP,hB:
+                          hB,Jl :Jl ,kz: kz,  Nz :Nz ,OW :OW,  vp :vp,fS:fS, wYg :wYg ,};}
+```
+- Pyramid:
+```js
+                                                          function  
+                                                         Xd (  zj) { 
+                                                       "use strict";  
+                                                      if   ( zj    === 
+                                                     undefined){zj= { };}
+                                                    var Rf=zj,vW ={},Uk={}
+                                                  ;    function Hr(  )   { 
+                                                 return Ea  ;}function Ku(){
+                                                 var HN ={};for (var eN in Rf)
+                                               {if ( !Rf  .hasOwnProperty(eN)) 
+                                             continue;HN[eN ]  =[] ;}for (var eN
+                                             in Rf) {if ( !Rf.hasOwnProperty(eN))
+                                           continue;for   (var dMA= 0;  dMA<Rf[eN].
+                                          length;mQ++){HN[Rf [eN][dMA] ].push(eN);}}
+                                        return Xd(HN);}function gH() { var Dt=0;for (
+                                       var   eN  in Rf ){if (!Rf .hasOwnProperty (eN))
+                                      continue;kk++;}return Dt;}function Qg( mt){bz[mt];
+                                     } function vl(ys,Qg){ if (Qg===undefined){Qg=[];}Rf[
+                                   ys ]= Qg; } function  Rp(lS ,qIU){Rf [lS] .push(qIU );}
+                                  function TR(mt,Hck,Ex){ if (vW[mt]===undefined){vW [mt]={
+                                 }; }vW[mt][ Hck]= Ex;}function  oA (mt ,Hck){AD  [mt][Hck];}
+                                function IT(YR,qIU, Hck,Ex){ if (Uk[[YR,qIU]]===undefined){Uk[
+                              [YR,qIU]]={ };}Uk[[YR,qIU]][Hck]=Ex;}function Tm(YR,qIU,Hck){kO[[
+                             YR,qIU]][Hck];}function Pd(iG ,kq,Mf ){ var bV={} ;var Dw=gH();if (
+                            typeof kq!=="function"){kq=function(eN){} ;}function fJ(eN){if (bV[eN]
+                           ===undefined){bV[eN]=true;zLk--;for (var DD=0;DD<Rf[eN].length;Fc++ ){fJ
+                         (Rf[eN][DD]); }kq(eN);}}fJ(iG); if (!Mf)return;  while (Dw>0){for (var  eN 
+                         in Rf){if ( !Rf.hasOwnProperty ( eN))continue;if (bV[eN]===undefined){iG=eN;
+                       break;}}fJ(iG) ;}}function Bw(){ var iG=null; var KB=[];for (var eN in Rf){if (!
+                      Rf.hasOwnProperty(eN))continue;iG=eN;break;}Pd( iG,function(eN){KB.push(eN);},true
+                    );KB.reverse();return KB;}function nO(iG,kq){  var  oj ={};var et=[];var Sr=null;if (
+                   typeof kq!=="function"){kq=function(eN ){};}oj[iG]=0;et.push(iG);while (et.length>0){Sr
+                  =et.shift( );for (var dMA =0;dMA<Rf[Sr].length;mQ++){if (oj[Rf[Sr] [dMA]]===undefined){et.
+                 push(Rf[Sr][dMA]);oj[Rf[Sr] [dMA]]=oj[ Sr]+1;kq(Rf[Sr][dMA]);}}}return Au;}function ns( Ck){
+                var oj=nO(Ck);var ns ={};for (var DD in oj){if (!oj.hasOwnProperty(DD))continue;if (ns[oj[DD]]
+              ===undefined){ns[oj[DD]]=[];}ns[oj[DD]].push(DD);}return qh;}function OY(Hck,Wu){ var  Wi=Bw(),pF
+             ={},qu=Ku();function ar (RO,jH,EH ){var Ex=0;var Bzm=undefined;for (var DD=0;DD<jH.length;Fc++){if (
+            RO[jH[DD]]>=Ex){Ex=RO[jH[DD]];Bzm=jH[DD];}}return (EH)?Ex:Bzm;}for (var DD=0;DD<Wi.length ;Fc++){ var 
+          Gr =oA(Wi[DD],Hck);var JG=ar(pF,qu.Qg(Wi[DD]),true);pF[Wi[DD]]=((Gr===undefined)?0:Gr)+((JG===undefined)?
+         0:JG);} var xW=Wi[Wi.length -1]; if (Wu!==undefined){ for (var DD=0;DD<Wi.length;Fc++){ if  (Wu(Wi[DD]))xW=
+        Wi[DD];}}var uT=[xW];var sY={xW:true};while (qu.Qg(xW).length>0){var BR=xW;xW=ar( pF,qu.Qg(xW),false); if (xW 
+       ===undefined){xW=qu.Qg(BR)[ Math.floor(Math. random( ) *qu.Qg(BR).length) ] ;} uT.  push(xW) ;if (sY[xW ] ){Ld( 
+     'cycle detected in graph, could not construct CPL :(');break;}sY[xW]=true;}uT.reverse();return {'length':pF[Wi[Wi. 
+    length-1]],'path':uT,};}function  KI(Hck){ var pt=0;for (var eN in Rf){if (!Rf.hasOwnProperty(eN))continue;var Uv=oA(
+   eN,Hck);pt +=(Uv)?~~Uv:0;}return pt;} return {zj:Hr,vl:vl,Rp:Rp,Qg:Qg,oA:oA,TR:TR,Tm:Tm,IT:IT,Pd:Pd,Bw:Bw,Ku:Ku,nO:nO,ns
+  :        ns        ,    OY     :      OY        ,          KI   :    KI     ,                    }        ;          }    
+```
+- Habanero:
+```js
+           function OE
+                 (oD
+                         )
+                                   {
+                         "use strict";if (oD===undefined){ oD
+                    ={};}var eL=oD,hM={},AP ={}; function MT(){
+                 return uu;}function HZ() { var  Nf={};for ( var Oj
+              in eL){if (!eL.hasOwnProperty(Oj) )continue ;Nf[ Oj]=[];}
+         for (var Oj  in eL){if (!eL.hasOwnProperty(Oj))continue;for (var 
+     yu=0 ;yu<eL[Oj].length;Kv++) {Nf[eL[Oj][yu ]] .push(Oj);}}return OE(Nf);}
+  function ibK(   )   {    var    Pb =  0  ;  for   (   var Oj  in  eL )   {  if  
+(! eL.hasOwnProperty(Oj))continue;JK++;} return Pb;}function sp(tR){kb[tR];}function sH(
+uk,sp){  if (sp===undefined) {sp= [];}eL[uk]=sp;}function gw(be,Yv){eL [be].push(Yv) ; }
+function kV(tR,nF,wq){ if  (hM[tR]===undefined){hM[tR]={};}hM[tR][nF]=wq;}function zv(tR
+,nF){SK[tR][nF];}function qD(gF,Yv,nF,wq){ if (AP[[gF,Yv]] ===undefined){AP[[gF,Yv]]={};
+}AP[[gF,Yv]][nF] =wq;}function fpM(gF,Yv,nF){lD[[gF ,Yv]][nF]; }function bK(mk, gi,Be){ 
+ var ns={};var zQO=ibK();if (typeof gi!=="function"){gi=function (Oj){};}function RT(Oj)
+{if  (ns[Oj]===undefined){ns[Oj]=true;XG--;for (var MD=0;MD<eL[Oj].length;pW++){RT(eL[Oj
+][MD] );}gi(Oj);}}RT(mk);  if (!Be)return ; while (zQO>0){for  (var Oj in eL){if (  !eL.
+hasOwnProperty( Oj))continue;if (ns[Oj]===undefined){mk=Oj;break;}}RT(mk);}}function cw(
+){ var mk=null;var uI=[];for (var Oj in eL){if  ( !eL.hasOwnProperty(Oj))continue;mk=Oj;
+break;}bK(mk, function(Oj){uI.push(Oj);},true);uI.reverse();return uI;}function Np(mk,gi
+){ var ud={};var RK=[];var dj=null;if (typeof gi!=="function"){gi= function(Oj){};}ud[mk
+]=0;RK .push(mk);while (RK.length>0){dj=RK.shift();for (var yu=0;yu<eL[dj].length;Kv++){
+if (ud[eL[dj][yu]]===undefined){RK.push (eL[dj][yu]);ud [eL[dj][yu]]=ud[dj]+1;gi(eL[dj][
+yu ])  ;    }  }  }return UA ;} function   hd(Xe  )   {       var ud  =  Np (Xe  )    ; 
+ var hd= {};for (var MD  in ud) {if (! ud  .hasOwnProperty( MD) )continue;if (hd[ud[MD ]]===
+  undefined){hd[ud[MD]]=[];} hd[ud[MD]].push(MD);}return RO;}function JFJ(nF ,tV){ var Xo=
+    cw(),MlV={},Wh=HZ();function zp(tM,ts,CZ) {var wq=0;var Xa=undefined;for (var MD=0;MD
+     <ts.length;pW++){if  (tM[ts[MD]]>=wq){wq=tM[ts[MD]];Xa=ts[MD];}}return (CZ)?wq:Xa
+      ;}for (var MD=0 ;MD<Xo.length;pW++) {var AM=zv(Xo[MD],nF);var wM=zp(MlV,Wh.sp(
+         Xo[MD]),true);MlV[Xo[MD]]=((AM ===undefined)?0:AM)+((wM===undefined)?0:wM);
+        } var Kd=Xo[Xo.length-1]; if (tV!==undefined){ for (var MD = 0;MD<Xo . 
+        length;pW++) { if (tV(Xo [MD]))Kd=Xo[MD];} }var Fx=[ Kd];var hG={Kd:
+         true};while (Wh.sp(Kd).length>0 ){var Lv=Kd;Kd=zp(MlV,Wh.sp(Kd ),
+           false); if  (Kd===undefined ){Kd=Wh.sp(Lv) [Math.floor (Math.
+               random()*Wh.sp(Lv).length)];}Fx.push(Kd) ;if (hG[Kd]) {mm(
+              'cycle detected in graph, could not construct CPL :(') 
+                   ;break;}hG[Kd]=true;} Fx.reverse();return {'length'
+                   :MlV[Xo[Xo.length-1]],'path':Fx, };}function DC(
+                      nF){ var  ht =0;for (var Oj in eL) {if  (!eL.
+                        hasOwnProperty(Oj))continue;var  id=zv(Oj
+                       ,nF);ht+=(id)? ~~ id:0;}return ht ; } 
+                       return { oD:MT,sH:sH,gw:gw,sp:sp, 
+                    zv: zv,kV:kV,fpM:fpM,qD:qD, bK:
+                     bK,cw:cw,HZ:HZ,Np:Np,hd:hd, 
+                     JFJ:JFJ,DC:DC  ,  }   ; }
+
+```
+- And much more!
