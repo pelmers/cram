@@ -34,7 +34,7 @@ func pickReshaper(option string) shapes.Reshaper {
 	switch option {
 	case "square", "box":
 		return shapes.Square
-	case "triangle", "pyramid":
+	case "triangle", "pyramid", "tree":
 		return shapes.Triangle
 	case "trapezoid", "volcano":
 		return shapes.Trapezoid
