@@ -206,7 +206,13 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens[i] = tokens[i] + " "
 				if tokens[i] == "return " {
 					tokens[i] += tokens[i+1]
-					tokens[i+1] = ""
+					if i+2 < len(tokens) {
+						if tok.isSymbol(tokens[i+2]) {
+							tokens[i+1] = ""
+						} else {
+							tokens[i+1] = " "
+						}
+					}
 				}
 			}
 			if i > 0 && !tok.isSymbol(tokens[i-1]) {
