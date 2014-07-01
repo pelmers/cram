@@ -42,7 +42,7 @@ func Pepper(tokens []string, ratio float64) string {
 	// do some counting to split tokens into their components
 	stemL := countTokensUpToTotalLength(tokens, int(area*stem))
 	stemTokens := tokens[:stemL]
-	trapL := countTokensUpToTotalLength(tokens, int(area*trapezoid))
+	trapL := countTokensUpToTotalLength(tokens[stemL:], int(area*trapezoid))
 	trapTokens := tokens[stemL : stemL+trapL]
 	squareL := countTokensUpToTotalLength(tokens[stemL+trapL:], int(area*square))
 	squareTokens := tokens[stemL+trapL : stemL+trapL+squareL]
@@ -52,7 +52,7 @@ func Pepper(tokens []string, ratio float64) string {
 	// the width of the square serves as the base of the triangle and trapezoid
 	base := float64(strings.Index(squareCode, "\n"))
 	trapArea := float64(TotalLength(trapTokens))
-	trapWidth := parametrizedTriangle(trapArea, 0.69*base, 2.0*trapArea/base, int(0.42*base))
+	trapWidth := parametrizedTriangle(trapArea, 0.8*base, 2.0*trapArea/base, int(0.4*base))
 	trapCode := JustifyByWidth(SplitLines(trapTokens, trapWidth), trapWidth, true)
 	triArea := float64(TotalLength(triTokens))
 	triParams := parametrizedTriangle(triArea, base, 2.0*triArea/base, 5)
@@ -64,10 +64,16 @@ func Pepper(tokens []string, ratio float64) string {
 	offset := int(base * 0.15) // don't start the stem right on the edge
 	slope := (base/2 - float64(offset)) / float64(len(stemTokens))
 	stemCode := ""
-	for i, _ := range stemTokens[:len(stemTokens)-1] {
+	for i, _ := range stemTokens {
 		if i%2 == 0 {
-			stemCode += fmt.Sprintf("%*s%s%s\n", offset+int(slope*float64(i)), " ",
-				stemTokens[i], stemTokens[i+1])
+			stemCode += fmt.Sprintf("%*s%s", offset+int(slope*float64(i)), " ",
+				stemTokens[i])
+			// add the final newline if it ended on an even index
+			if i == len(stemTokens)-1 {
+				stemCode += "\n"
+			}
+		} else {
+			stemCode += stemTokens[i] + "\n"
 		}
 	}
 	return strings.Join([]string{
