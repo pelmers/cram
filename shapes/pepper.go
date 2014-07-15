@@ -2,6 +2,7 @@ package shapes
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 )
@@ -36,24 +37,25 @@ func Pepper(tokens []string, ratio float64) string {
 	area := float64(TotalLength(tokens))
 	// How to apportion the area:
 	stem := 0.01
-	trapezoid := 0.13
+	semicircle := 0.13
 	square := 0.45
 	// rest: flipped triangle
 	// do some counting to split tokens into their components
 	stemL := countTokensUpToTotalLength(tokens, int(area*stem))
 	stemTokens := tokens[:stemL]
-	trapL := countTokensUpToTotalLength(tokens[stemL:], int(area*trapezoid))
-	trapTokens := tokens[stemL : stemL+trapL]
-	squareL := countTokensUpToTotalLength(tokens[stemL+trapL:], int(area*square))
-	squareTokens := tokens[stemL+trapL : stemL+trapL+squareL]
-	triTokens := tokens[stemL+trapL+squareL:]
+	scL := countTokensUpToTotalLength(tokens[stemL:], int(area*semicircle))
+	scTokens := tokens[stemL : stemL+scL]
+	squareL := countTokensUpToTotalLength(tokens[stemL+scL:], int(area*square))
+	squareTokens := tokens[stemL+scL : stemL+scL+squareL]
+	triTokens := tokens[stemL+scL+squareL:]
 	// the top part is a very skinny curved stem
 	squareCode := Square(squareTokens, ratio)
-	// the width of the square serves as the base of the triangle and trapezoid
+	// the width of the square serves as the base of the triangle and semicircle
 	base := float64(strings.Index(squareCode, "\n"))
-	trapArea := float64(TotalLength(trapTokens))
-	trapWidth := parametrizedTriangle(trapArea, 0.8*base, 2.0*trapArea/base, int(0.4*base))
-	trapCode := JustifyByWidth(SplitLines(trapTokens, trapWidth), trapWidth, true)
+	// construct semicircle
+	scWidth := parametrizedEllipse(base, 1.90/math.Pow(ratio, 2)*base, 5)
+	scCode := JustifyByWidth(SplitLines(scTokens, scWidth), scWidth, true)
+	// construct triangle
 	triArea := float64(TotalLength(triTokens))
 	triParams := parametrizedTriangle(triArea, base, 2.0*triArea/base, 5)
 	triWidth := func(h int) int {
@@ -77,7 +79,7 @@ func Pepper(tokens []string, ratio float64) string {
 		}
 	}
 	return strings.Join([]string{
-		perturbIndents(stemCode, 0.2) + trapCode,
+		perturbIndents(stemCode, 0.2) + scCode,
 		squareCode,
 		perturbIndents(triCode, 0.4),
 	}, "\n")
