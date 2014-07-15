@@ -46,9 +46,9 @@ func BSearchStrings(a []string, target string) int {
 	return -1
 }
 
-// Return whether a string is all digits
-func IsDigits(a string) bool {
-	if _, err := strconv.Atoi(a); err != nil {
+// Return whether a string is a number
+func IsNum(a string) bool {
+	if _, err := strconv.ParseFloat(a, 64); err != nil {
 		return false
 	}
 	return true

@@ -76,13 +76,13 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	defs := make(map[string]string)
 	for i, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
-		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) {
+		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
 			continue
 		}
 		// if it comes after a dot, also check the part before the dot
 		if strings.TrimSpace(tokens[i-1]) == "." {
 			t := tokens[i-2]
-			if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsDigits(t) || tok.isQuoted(t) {
+			if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
 				continue
 			}
 		}
@@ -152,8 +152,8 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens[len(tokens)-1] = string(nsRune) + "="
 				code = code[1:]
 			}
-			// check for single-line comment
 		case '/':
+			// check for single-line comment
 			if code[0] == '/' {
 				// ignore the rest of the line and remove the / token we added
 				tokens = tokens[:len(tokens)-1]
@@ -173,6 +173,18 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				if r != rune(0) {
 					tokens[len(tokens)-1] = "/" + code[:next]
 					code = code[next:]
+				}
+			}
+		case '.':
+			// check for floating point number: if previous token was a number and next one is too
+			beforeDot := tokens[len(tokens)-2]
+			if tokenize.IsNum(beforeDot) {
+				pos, _ := tok.firstSymbol(code)
+				nextTok := code[:pos]
+				if tokenize.IsNum(nextTok) {
+					tokens[len(tokens)-2] = fmt.Sprintf("%s.%s", beforeDot, nextTok)
+					tokens[len(tokens)-1] = ""
+					code = code[pos:]
 				}
 			}
 		case '=':
@@ -201,7 +213,7 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 	}
 	// go through tokens and hardcode a space before and after any keywords
 	for i, _ := range tokens[:len(tokens)-1] {
-		if tok.isKw(tokens[i]) || tokenize.IsDigits(tokens[i]) {
+		if tok.isKw(tokens[i]) || tokenize.IsNum(tokens[i]) {
 			if !tok.isSymbol(tokens[i+1]) {
 				tokens[i] = tokens[i] + " "
 				if tokens[i] == "return " {
