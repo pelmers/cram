@@ -46,13 +46,23 @@ func (tok *JSTokenizer) firstSymbol(text string) (int, rune) {
 	return len(text) - 1, rune(0)
 }
 
-// Return true if c is either a space or a symbol
+// Return true if t is either a space or a symbol
 func (tok *JSTokenizer) isSymbol(t string) bool {
 	if len(t) != 1 {
 		return false
 	}
 	r := rune(t[0])
-	return unicode.IsSpace(r) || tokenize.SearchRunes(tok.symbols, r) != -1
+	return tokenize.SearchRunes(tok.symbols, r) != -1
+}
+
+// Return whether t is white space or empty
+func (tok *JSTokenizer) isSpace(t string) bool {
+	for _, r := range t {
+		if !unicode.IsSpace(r) {
+			return false
+		}
+	}
+	return true
 }
 
 // Return whether t is a javascript reserved word
@@ -76,13 +86,13 @@ func (tok *JSTokenizer) RenameTokens(tokens []string, length int) {
 	defs := make(map[string]string)
 	for i, t := range tokens {
 		// rename if it is not a keyword, not a string, not reserved, and not a symbol
-		if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
+		if tok.isKw(t) || tok.isSymbol(t) || tok.isSpace(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
 			continue
 		}
 		// if it comes after a dot, also check the part before the dot
 		if strings.TrimSpace(tokens[i-1]) == "." {
 			t := tokens[i-2]
-			if tok.isKw(t) || tok.isSymbol(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
+			if tok.isKw(t) || tok.isSymbol(t) || tok.isSpace(t) || tok.isReserved(t) || tokenize.IsNum(t) || tok.isQuoted(t) {
 				continue
 			}
 		}
@@ -131,10 +141,12 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 		// TODO: support escaped quotes
 		case '"', '\'':
 			nsIndex = strings.IndexRune(code, nsRune)
-			tokens[len(tokens)-1] = fmt.Sprintf("%c%s%c",
-				nsRune, code[:nsIndex], nsRune)
-			// advance the code to the close quote character
-			code = code[nsIndex+1:]
+			if nsIndex >= 0 {
+				tokens[len(tokens)-1] = fmt.Sprintf("%c%s%c",
+					nsRune, code[:nsIndex], nsRune)
+				// advance the code to the close quote character
+				code = code[nsIndex+1:]
+			}
 		case '+', '-':
 			// check for unary -- or ++
 			if rune(code[0]) == nsRune {
@@ -168,9 +180,10 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 			if tok.isSymbol(tokens[len(tokens)-1]) {
 				// find the next symbol after the next / restart there
 				nextSlash := strings.Index(code, "/")
+				nextLine := strings.Index(code, "\n")
 				next, r := tok.firstSymbol(code[nextSlash+1:])
 				next += nextSlash + 1
-				if r != rune(0) {
+				if r != rune(0) && nextSlash < nextLine {
 					tokens[len(tokens)-1] = "/" + code[:next]
 					code = code[next:]
 				}
