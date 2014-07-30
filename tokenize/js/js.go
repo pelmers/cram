@@ -27,7 +27,7 @@ func NewJSTokenizer() *JSTokenizer {
 		// reserved
 		[]string{
 			"===", "==", "!==", "!=", "console", "document", "window", "length", "push", "hasOwnProperty",
-			">=", "<=", "+=", "-=", "reverse", "shift", "Math", "undefined", "null", "true", "false",
+			">=", "<=", "+=", "-=", "*=", "/=", "reverse", "shift", "Math", "undefined", "null", "true", "false",
 		},
 	}
 }
@@ -164,6 +164,12 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				tokens[len(tokens)-1] = string(nsRune) + "="
 				code = code[1:]
 			}
+		case '*':
+			// check for *=
+			if code[0] == '=' {
+				tokens[len(tokens)-1] = string(nsRune) + "="
+				code = code[1:]
+			}
 		case '/':
 			// check for single-line comment
 			if code[0] == '/' {
@@ -175,6 +181,11 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 				// skip the codepoint forward until the "*/" end comment
 				tokens = tokens[:len(tokens)-1]
 				code = code[strings.Index(code, "*/")+2:]
+			}
+			// check for /=
+			if code[0] == '=' {
+				tokens[len(tokens)-1] = string(nsRune) + "="
+				code = code[1:]
 			}
 			// if the previous token is a symbol, this is a regexp (I think)
 			if tok.isSymbol(tokens[len(tokens)-1]) {
