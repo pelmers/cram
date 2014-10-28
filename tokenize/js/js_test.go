@@ -1,32 +1,37 @@
 package js
 
 import (
-	"bufio"
-	"fmt"
 	"github.com/pelmers/cram/tokenize"
-	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 )
 
-func TestTokenizeFile(t *testing.T) {
-	filename := "test/test.js"
-	file, err := os.Open(filename)
-	if err != nil {
-		t.Error("Could not open ", filename, " for testing")
-	}
-	reader := bufio.NewReader(file)
-	code, err := ioutil.ReadAll(reader)
-	if err != nil {
-		t.Error("Could not convert code into string.")
-	}
+// Test if tokenizing string gives the expected tokens.
+func testTokenization(code string, expected_tokens []string, t *testing.T) {
 	tok := NewJSTokenizer()
-	tokens := tok.Tokenize(string(code), []string{""})
-	expected_tokens := []string{}
+	tokens := tok.Tokenize(code, []string{""})
 	if !tokenize.SlicesEqual(tokens, expected_tokens) {
-		fmt.Println(strings.Join(tokens, ""))
-		t.Error("Expected", expected_tokens, "Got", tokens)
+		t.Error("Expected:", strings.Join(expected_tokens, "|"), "Got", strings.Join(tokens, "|"))
 	}
-	file.Close()
+}
+
+func TestFunctionDecl(t *testing.T) {
+	code := "function testFunction(param1, param2)"
+	expected := []string{"function ", "testFunction", "(", "param1", ",", "param2", ")"}
+	testTokenization(code, expected, t)
+}
+
+func TestIf(t *testing.T) {
+	code := "if (upto < 2) return 1;"
+	expected := []string{"if ", "(", "upto", "<", "2", ")", "return 1", ";"}
+	testTokenization(code, expected, t)
+	code = "if (upto < 2) {return 1;}"
+	expected = []string{"if ", "(", "upto", "<", "2", ")", "{", "return 1", ";", "}"}
+	testTokenization(code, expected, t)
+}
+
+func TestWhile(t *testing.T) {
+	code := "while (i    >=  0) i++;"
+	expected := []string{"while ", "(", "i", ">=", " 0", ")", "i++", ";"}
+	testTokenization(code, expected, t)
 }

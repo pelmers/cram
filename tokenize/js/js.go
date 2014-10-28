@@ -256,5 +256,16 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 			}
 		}
 	}
-	return tokens
+	return removeEmpty(tokens)
+}
+
+// Return slice of strings with empty strings removed
+func removeEmpty(slice []string) []string {
+	newSlice := make([]string, 0, len(slice))
+	for _, v := range slice {
+		if v != "" {
+			newSlice = append(newSlice, v)
+		}
+	}
+	return newSlice
 }
