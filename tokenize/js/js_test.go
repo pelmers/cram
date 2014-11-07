@@ -35,3 +35,9 @@ func TestWhile(t *testing.T) {
 	expected := []string{"while ", "(", "i", ">=", " 0", ")", "i++", ";"}
 	testTokenization(code, expected, t)
 }
+
+func TestEmpty(t *testing.T) {
+	code := ""
+	expected := []string{}
+	testTokenization(code, expected, t)
+}

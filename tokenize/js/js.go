@@ -236,6 +236,9 @@ func (tok *JSTokenizer) Tokenize(code string, _reserved []string) []string {
 		code = strings.TrimSpace(code)
 	}
 	// go through tokens and hardcode a space before and after any keywords
+	if len(tokens) == 0 {
+		return removeEmpty(tokens)
+	}
 	for i, _ := range tokens[:len(tokens)-1] {
 		if tok.isKw(tokens[i]) || tokenize.IsNum(tokens[i]) {
 			if !tok.isSymbol(tokens[i+1]) {
